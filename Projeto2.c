@@ -5,48 +5,57 @@
 #include <unistd.h>
 #include <time.h>
 
-sem_t sempombo, colapostit;
+#define N 20
+
+sem_t mutex, colapostit, limpostit;
 int cont_postit;
 pthread_mutex_t mutexsum;
 time_t t;
 
 //Funçao para color o postit
 void fcolapostit(int id){
-    sleep(1 + (rand() % 1));
+    sleep(1 + rand() % 1);
     cont_postit++;
     printf("O usuario %i colou um postit. Total de postit: %i\n", id, cont_postit);
 }
 
 //Funçao que define o momento que o pombo vai ate o lado b e o tempo q ele vai levar pra volta
 void leva_mochila_ate_B_e_volta(){
-    sem_wait(&sempombo);
-    sem_wait(&colapostit);
-    srand(time(NULL));
-    sleep(1 + (rand() % 4));
+    printf("teste 1\n");
+    sem_post(&mutex);
+    sem_wait(&mutex);
     cont_postit = 0;
-    sem_post(&sempombo);
-    sem_post(&colapostit);
+    for(int i = 0; i < N; i++){
+        sem_post(&limpostit);
+        printf("%i\n", i);
+    }
+
+    srand(time(NULL));
+    sleep(1 + (rand() % 1));
+    
 }
 
 //Funçao que define quando o pombo dorme e quando ele eh liberado 
 void dorme_aleatorio(){
     if(cont_postit != 20){
         printf("O pombo dormiu\n");
+        sem_post(&mutex);
+        sem_wait(&colapostit);
     }
-    sem_wait(&sempombo);
-    while(cont_postit != 20){
-        sleep(1);
-    }
-    printf("O pombo acordou\n");
-    sem_post(&sempombo);
+    printf("O pombo acordou e ira levas as mensagens ate o ponto B\n");
 }    
 
 //Funçao para o funcionamento das Threads Usuarios
 void* usuarios(void* threadid){
     int uid = *(int*)threadid;
     while(1){
+        sem_wait(&mutex);
+        sem_wait(&limpostit);
         fcolapostit(uid);
-        sched_yield();
+        if(cont_postit == 20){
+            sem_post(&colapostit);
+        }
+        sem_post(&mutex);
     }
     pthread_exit(NULL);
 }
@@ -56,6 +65,7 @@ void* pombof(){
     while(1){
         if(cont_postit == 20){
             leva_mochila_ate_B_e_volta();
+            printf("teste 3");
         }else{
             dorme_aleatorio();
         }
@@ -72,7 +82,8 @@ int main(){
     pthread_t usuario[i], pombo;
 
     //iniciando os semaforos
-    sem_init(&sempombo,0,1);
+    sem_init(&mutex,0,1);
+    sem_init(&limpostit, 0, 20);
     sem_init(&colapostit,0,0);
 
     //inicializando e testando o pombo;
@@ -84,7 +95,6 @@ int main(){
     
     //inicializando os usuarios
     for(x = 0; x < i; x++){
-        printf("Criando thread do cliente %i\n", x);
         pstatus = pthread_create(&(usuario[x]), NULL, usuarios, &x);
         //Verificaçao para ver se a thread foi executada com exito
         if(pstatus != 0){
