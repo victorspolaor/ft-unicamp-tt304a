@@ -1,3 +1,4 @@
+//Blibliotecas utilizadas
 #include <stdlib.h>
 #include <stdio.h>
 #include <pthread.h>
@@ -5,13 +6,13 @@
 #include <unistd.h>
 #include <time.h>
 
-#define N 20
-#define limite 1000
+#define N 20                         //Numero definido para a quantidade de post-its que o pombo suporta
 
-sem_t mutex, vazio, cheio, pombosem, usuariosem;
-int cont_postit;
-time_t t;
+sem_t mutex, vazio, cheio, pombosem; //Definindo semaforos
+int cont_postit;                     //Definindo variavel globais que contará os post-its
+time_t t;                            //Definindo variavel de tempo para utilizar o srand com mais variedade
 
+//Chamadas de funçoes
 void reseta();
 void fcolapostit();
 void leva_mochila_ate_B_e_volta();
@@ -21,14 +22,13 @@ void *pombof(void*);
 //Funçao Main
 int main(){
 
-    int i, x; //Definindo variaveis auxiliares
-    cont_postit = 0; //Definindo valor inicial para a quantidade de post-its
+    int i, x;                                                 //Definindo variaveis auxiliares
+    cont_postit = 0;                                          //Definindo valor inicial para a quantidade de post-its
     printf("Quantos usuarios escreveram nos post-its?\nR: "); //Perguntando ao usuario quantas threads o programa ira utilizar
     scanf("%i", &i); 
-    pthread_t usuario[i], pombo; //Definindo as threads
+    pthread_t usuario[i], pombo;                              //Definindo as threads
 
     //iniciando os semaforos
-    sem_init(&usuariosem, 1, 0);
     sem_init(&mutex, 1, 1);
     sem_init(&pombosem, 1, 0);
     sem_init(&vazio, 0, N);
