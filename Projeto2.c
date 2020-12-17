@@ -74,8 +74,8 @@ void *usuarios(void *arg){
     while (1){
         sem_wait(&mutex);
         dormealeatorio();
-        colapostit(arg);
         cont_postit++; 
+        colapostit(arg);
         if(cont_postit == N){
             printf("ATENÇAO! A MOCHILA ESTA CHEIA!!!\n");
             sem_post(&pombosem);
