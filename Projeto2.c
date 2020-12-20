@@ -27,7 +27,7 @@ int main(){
     pthread_t usuario[i], pombo;                              //Definindo as threads
 
     //iniciando os semaforos
-    sem_init(&mutex, 0, 1);
+    sem_init(&mutex, 1, 1);
     sem_init(&pombosem, 0, 0);
 
     //inicializando o pombo;
@@ -59,14 +59,14 @@ void colapostit(void *arg){
 //Funçao que define quanto tempo o pombo demorará na viagem
 void leva_mochila_ate_B_e_volta(){
     srand(time(NULL));
-    sleep(1 + (rand() % 3));
+    sleep(1 + (rand() % 1));
 
 }
 
 //Funçao que define o tempo q o usuario demorará pra escrever o post-it
 void dormealeatorio(){
     srand(time(NULL));
-    sleep(1 + (rand() % 3));
+    sleep(1 + (rand() % 1));
 }
 
 //Funçao para o funcionamento das Threads Usuarios
@@ -95,7 +95,6 @@ void *pombof(void *p_arg){
         printf("**O pombo retornou e irá dormir enquanto espera os 20 post-it**\n");
         cont_postit = 0;
         sem_post(&mutex);
-        sem_wait(&pombosem);
     }
 }
 
