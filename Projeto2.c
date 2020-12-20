@@ -59,14 +59,14 @@ void colapostit(void *arg){
 //Funçao que define quanto tempo o pombo demorará na viagem
 void leva_mochila_ate_B_e_volta(){
     srand(time(NULL));
-    sleep(1 + (rand() % 1));
+    sleep(1 + (rand() % 3));
 
 }
 
 //Funçao que define o tempo q o usuario demorará pra escrever o post-it
 void dormealeatorio(){
     srand(time(NULL));
-    sleep(1 + (rand() % 1));
+    sleep(1 + (rand() % 3));
 }
 
 //Funçao para o funcionamento das Threads Usuarios
